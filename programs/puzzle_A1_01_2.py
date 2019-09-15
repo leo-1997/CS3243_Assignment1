@@ -30,8 +30,6 @@ class State(object):
             self.heuristic = self.estimate(self.rep)
         else:
             self.heuristic = heuristic
-        # print(self.heuristic)
-        # print("+++")
         self.path = []
 
     def setPath(self, path):
@@ -61,38 +59,21 @@ class State(object):
             next_state[self.coor_empty[0] + 1][self.coor_empty[1]] = 0
             next_state[self.coor_empty[0]][self.coor_empty[1]] = self.rep[self.coor_empty[0] + 1][self.coor_empty[1]]
             next_coor[0] = next_coor[0] + 1
-            # if (self.rep[self.coor_empty[0] + 1][self.coor_empty[1]] - 1) / 3 <= self.coor_empty[0]:
-            #     next_heuristic -= 1
-            # else:
-            #     next_heuristic += 1
         if action == "RIGHT":
             next_state[self.coor_empty[0]][self.coor_empty[1] - 1] = 0
             next_state[self.coor_empty[0]][self.coor_empty[1]] = self.rep[self.coor_empty[0]][self.coor_empty[1] - 1]
             next_coor[1] = next_coor[1] - 1
-            # if (self.rep[self.coor_empty[0]][self.coor_empty[1] - 1] - 1) % 3 >= self.coor_empty[1]:
-            #     next_heuristic -= 1
-            # else:
-            #     next_heuristic += 1
         if action == "DOWN":
             next_state[self.coor_empty[0] - 1][self.coor_empty[1]] = 0
             next_state[self.coor_empty[0]][self.coor_empty[1]] = self.rep[self.coor_empty[0] - 1][self.coor_empty[1]]
             next_coor[0] = next_coor[0] - 1
-            # if (self.rep[self.coor_empty[0] - 1][self.coor_empty[1]] - 1) / 3 >= self.coor_empty[0]:
-            #     next_heuristic -= 1
-            # else:
-            #     next_heuristic += 1
         if action == "LEFT":
             next_state[self.coor_empty[0]][self.coor_empty[1] + 1] = 0
             next_state[self.coor_empty[0]][self.coor_empty[1]] = self.rep[self.coor_empty[0]][self.coor_empty[1] + 1]
             next_coor[1] = next_coor[1] + 1
-            # if (self.rep[self.coor_empty[0]][self.coor_empty[1] + 1] - 1) % 3 <= self.coor_empty[0]:
-            #     next_heuristic -= 1
-            # else:
-            #     next_heuristic += 1
         next_heuristic = self.estimate(next_state)
         next = State(next_state, self.cost + 1, next_coor, next_heuristic)
         next.setPath(next_path)
-        # print(next)
         return next
 
     def compareTo(self, other):
