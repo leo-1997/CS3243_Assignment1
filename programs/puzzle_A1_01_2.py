@@ -30,6 +30,8 @@ class State(object):
             self.heuristic = self.estimate(self.rep)
         else:
             self.heuristic = heuristic
+        # print(self.heuristic)
+        # print("+++")
         self.path = []
 
     def setPath(self, path):
@@ -40,11 +42,9 @@ class State(object):
         for i in range(0, 3):
             for j in range(0, 3):
                 value = rep[i][j]
-                if value == 0:
-                    continue
-                goal_position = [(value - 1) / 3, (value - 1) % 3]
-                answer = answer + abs(goal_position[0] - i) + abs(goal_position[1] - j)
-
+                goal_position = [int((value - 1) / 3), (value - 1) % 3]
+                if rep[i][j] != 0 and [i, j] != goal_position:
+                    answer+=1 
         return answer
 
     def act(self, action):
@@ -54,7 +54,6 @@ class State(object):
 
         next_state = copy.deepcopy(self.rep)
         next_coor = copy.copy(self.coor_empty)
-        next_heuristic = self.heuristic
         next_path = copy.copy(self.path)
         next_path.append(action)
 
@@ -62,43 +61,45 @@ class State(object):
             next_state[self.coor_empty[0] + 1][self.coor_empty[1]] = 0
             next_state[self.coor_empty[0]][self.coor_empty[1]] = self.rep[self.coor_empty[0] + 1][self.coor_empty[1]]
             next_coor[0] = next_coor[0] + 1
-            if (self.rep[self.coor_empty[0] + 1][self.coor_empty[1]] - 1) / 3 <= self.coor_empty[0]:
-                next_heuristic -= 1
-            else:
-                next_heuristic += 1
+            # if (self.rep[self.coor_empty[0] + 1][self.coor_empty[1]] - 1) / 3 <= self.coor_empty[0]:
+            #     next_heuristic -= 1
+            # else:
+            #     next_heuristic += 1
         if action == "RIGHT":
             next_state[self.coor_empty[0]][self.coor_empty[1] - 1] = 0
             next_state[self.coor_empty[0]][self.coor_empty[1]] = self.rep[self.coor_empty[0]][self.coor_empty[1] - 1]
             next_coor[1] = next_coor[1] - 1
-            if (self.rep[self.coor_empty[0]][self.coor_empty[1] - 1] - 1) % 3 >= self.coor_empty[1]:
-                next_heuristic -= 1
-            else:
-                next_heuristic += 1
+            # if (self.rep[self.coor_empty[0]][self.coor_empty[1] - 1] - 1) % 3 >= self.coor_empty[1]:
+            #     next_heuristic -= 1
+            # else:
+            #     next_heuristic += 1
         if action == "DOWN":
             next_state[self.coor_empty[0] - 1][self.coor_empty[1]] = 0
             next_state[self.coor_empty[0]][self.coor_empty[1]] = self.rep[self.coor_empty[0] - 1][self.coor_empty[1]]
             next_coor[0] = next_coor[0] - 1
-            if (self.rep[self.coor_empty[0] - 1][self.coor_empty[1]] - 1) / 3 >= self.coor_empty[0]:
-                next_heuristic -= 1
-            else:
-                next_heuristic += 1
+            # if (self.rep[self.coor_empty[0] - 1][self.coor_empty[1]] - 1) / 3 >= self.coor_empty[0]:
+            #     next_heuristic -= 1
+            # else:
+            #     next_heuristic += 1
         if action == "LEFT":
             next_state[self.coor_empty[0]][self.coor_empty[1] + 1] = 0
             next_state[self.coor_empty[0]][self.coor_empty[1]] = self.rep[self.coor_empty[0]][self.coor_empty[1] + 1]
             next_coor[1] = next_coor[1] + 1
-            if (self.rep[self.coor_empty[0]][self.coor_empty[1] + 1] - 1) % 3 <= self.coor_empty[0]:
-                next_heuristic -= 1
-            else:
-                next_heuristic += 1
-
+            # if (self.rep[self.coor_empty[0]][self.coor_empty[1] + 1] - 1) % 3 <= self.coor_empty[0]:
+            #     next_heuristic -= 1
+            # else:
+            #     next_heuristic += 1
+        next_heuristic = self.estimate(next_state)
         next = State(next_state, self.cost + 1, next_coor, next_heuristic)
         next.setPath(next_path)
+        # print(next)
         return next
 
     def compareTo(self, other):
         if not isinstance(other, State):
             raise NameError("Not a state")
 
+        # print(self.cost)
         return self.heuristic + self.cost - other.heuristic - other.cost
 
     def hash(self):
@@ -135,7 +136,8 @@ class PriorityQueue(object):
             return
         index = self.count - 1
         parent = (index - 1) / 2
-        while self.queue[index].compareTo(self.queue[parent]) < 0:
+        # print(index, ' ', parent)
+        while self.queue[int(index)].compareTo(self.queue[int(parent)]) < 0:
             temp = self.queue[index]
             self.queue[index] = self.queue[parent]
             self.queue[parent] = temp
@@ -201,8 +203,8 @@ class Puzzle(object):
                     continue
                 explored.add(next_state.hash())
                 p_queue.add(next_state)
-        return "UNSOLVABLE"
-
+        return ['UNSOLVABLE']
+        
     def isGoal(self, state):
         for i in range(0, 3):
             for j in range(0, 3):

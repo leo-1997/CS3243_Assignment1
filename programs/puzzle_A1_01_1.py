@@ -201,7 +201,7 @@ class Puzzle(object):
                     continue
                 explored.add(next_state.hash())
                 p_queue.add(next_state)
-        return "UNSOLVABLE"
+        return ['UNSOLVABLE']
 
     def isGoal(self, state):
         for i in range(0, 3):
